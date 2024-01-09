@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/caculator_screen.dart';
+import 'package:my_app/screens/my-teams/My_Teams.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,8 +12,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Calulator',
-      theme: ThemeData.dark(),
-      home: const CaculatorScreen(),
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const MyTeamScreen(),
     );
   }
 }
