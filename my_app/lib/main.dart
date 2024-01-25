@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/screens/my-teams/My_Teams.dart';
+import 'package:my_app/screens/my-home/My_Home_Screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Calulator',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const MyTeamScreen(),
+      home: const MyHomeScreen(),
     );
   }
 }
