@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/screens/my-home/My_Home_Screen.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/views/on_boarding/startup.view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+SharedPreferences? prefs;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  prefs = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 
@@ -11,9 +17,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Calulator',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const MyHomeScreen(),
-    );
+        title: 'My-App',
+        debugShowCheckedModeBanner: false,
+        builder: EasyLoading.init(),
+        theme: ThemeData(
+            fontFamily: 'Quicksand',
+            textTheme: GoogleFonts.quicksandTextTheme(),
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
+            useMaterial3: true),
+        home: const StartupView());
   }
 }
