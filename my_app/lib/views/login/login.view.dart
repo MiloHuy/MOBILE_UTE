@@ -31,6 +31,8 @@ class _LoginViewState extends State<LoginView> {
       if (responseObj[KKey.status] == "OK") {
         Globs.udSet(responseObj[KKey.payload] as Map? ?? {}, Globs.userPayload);
         Globs.udBoolSet(true, Globs.userLogin);
+        Globs.udStringToken(
+            'token', responseObj['responseData']['accessToken']);
 
         Navigator.pushAndRemoveUntil(
             context,
@@ -38,6 +40,7 @@ class _LoginViewState extends State<LoginView> {
               builder: (context) => const OnBoardingView(),
             ),
             (route) => false);
+        // await prefs?.setString('token', responseObj['accessToken']);
       } else {
         log(responseObj[KKey.message]);
         mdShowAlert(Globs.appName,

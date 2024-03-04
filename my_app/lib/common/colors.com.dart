@@ -8,4 +8,6 @@ class TColor {
   static Color get placeholder => const Color(0xffB6B7B7);
   static Color get white => const Color(0xffffffff);
   static Color get bgButtonPrimary => const Color.fromARGB(255, 35, 48, 193);
+  static Color get bgHeaderPrimary => const Color.fromARGB(255, 146, 170, 100);
+  static Color get bgAppPrimary => const Color.fromARGB(228, 164, 207, 100);
 }

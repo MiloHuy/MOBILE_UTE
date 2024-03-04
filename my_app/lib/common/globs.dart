@@ -33,6 +33,10 @@ class Globs {
     prefs?.setBool(key, data);
   }
 
+  static void udStringToken(String key, String value) {
+    prefs?.setString(key, value);
+  }
+
   static void udIntSet(int data, String key) {
     prefs?.setInt(key, data);
   }
