@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_app/views/on_boarding/startup.view.dart';
+import 'package:my_app/views/onBoard/on-board.view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 SharedPreferences? prefs;
@@ -25,6 +25,6 @@ class MyApp extends StatelessWidget {
             textTheme: GoogleFonts.quicksandTextTheme(),
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
             useMaterial3: true),
-        home: const StartupView());
+        home: const OnBoardingView());
   }
 }

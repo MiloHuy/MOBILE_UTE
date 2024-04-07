@@ -14,13 +14,17 @@ class AllProductRequest {
     return products;
   }
 
-  static Future<List<Products>> fetchAllProducts({int page = 1}) async {
+  static Future<List<Products>> fetchAllProducts() async {
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      final List<dynamic> jsonData = json.decode(response.body);
+      final Map<String, dynamic> jsonData = json.decode(response.body);
+
+      final List<dynamic> productsData = jsonData['responseData']['products'];
+
       List<Products> products =
-          jsonData.map((json) => Products.fromJSON(json)).toList();
+          productsData.map((json) => Products.fromJSON(json)).toList();
+
       return products;
     } else {
       throw Exception('Không thể lấy danh sách');

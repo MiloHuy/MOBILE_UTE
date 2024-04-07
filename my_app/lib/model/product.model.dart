@@ -1,58 +1,84 @@
-import 'package:flutter/material.dart';
-
 class Products {
-  int? productId;
-  String? name;
-  List? prices;
-  Object? productType;
-  List? markers;
-  String? desc;
-  List? images;
-  TimeOfDay? createdAt;
-  Object? defaultPrice;
-  String? defaultImage;
+  final String id;
+  final String name;
+  final List<Price> prices;
+  final String productTypeId;
+  final String productTypeName;
+  final List<Marker> markers;
+  final String description;
+  final List<String> images;
+  final DateTime createdAt;
+  final Price defaultPrice;
+  final String defaultImage;
 
-  Products(
-      {required this.productId,
-      required this.name,
-      this.prices,
-      this.createdAt,
-      this.productType,
-      this.defaultImage,
-      this.desc,
-      this.images,
-      this.defaultPrice,
-      this.markers});
+  Products({
+    required this.id,
+    required this.name,
+    required this.prices,
+    required this.productTypeId,
+    required this.productTypeName,
+    required this.markers,
+    required this.description,
+    required this.images,
+    required this.createdAt,
+    required this.defaultPrice,
+    required this.defaultImage,
+  });
 
-  Products.fromJSON(Map<String, dynamic> json) {
-    productId = json["_id"];
-    name = json["name"];
-    prices = json["prices"]?.cast<int>();
-    productType = json["productType"];
-    markers = json["markers"]?.cast<int>();
-    desc = json["desc"];
-    images = json["images"]?.cast<String>();
-    createdAt = json["createdAt"] != null
-        ? TimeOfDay.fromDateTime(DateTime.parse(json["createdAt"]))
-        : null;
-    defaultPrice = json["defaultPrice"];
-    defaultImage = json["defaultImage"];
+  factory Products.fromJSON(Map<String, dynamic> json) {
+    return Products(
+      id: json['_id'],
+      name: json['name'],
+      prices: (json['prices'] as List<dynamic>)
+          .map((priceJson) => Price.fromJSON(priceJson))
+          .toList(),
+      productTypeId: json['productType']['_id'],
+      productTypeName: json['productType']['name'],
+      markers: (json['markers'] as List<dynamic>)
+          .map((markerJson) => Marker.fromJSON(markerJson))
+          .toList(),
+      description: json['desc'],
+      images: List<String>.from(json['images'] ?? []),
+      createdAt: DateTime.parse(json['createdAt']),
+      defaultPrice: Price.fromJSON(json['defaultPrice']),
+      defaultImage: json['defaultImage'],
+    );
   }
+}
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+class Price {
+  final String size;
+  final int price;
+  final String id;
 
-    data['_id'] = productId;
-    data['name'] = name;
-    data['prices'] = prices;
-    data['createdAt'] = createdAt;
-    data['productType'] = productType;
-    data['defaultImage'] = defaultImage;
-    data['desc'] = desc;
-    data['images'] = images;
-    data['defaultPrice'] = defaultPrice;
-    data['markers'] = markers;
+  Price({
+    required this.size,
+    required this.price,
+    required this.id,
+  });
 
-    return data;
+  factory Price.fromJSON(Map<String, dynamic> json) {
+    return Price(
+      size: json['size'],
+      price: json['price'],
+      id: json['_id'],
+    );
+  }
+}
+
+class Marker {
+  final String id;
+  final String name;
+
+  Marker({
+    required this.id,
+    required this.name,
+  });
+
+  factory Marker.fromJSON(Map<String, dynamic> json) {
+    return Marker(
+      id: json['_id'],
+      name: json['name'],
+    );
   }
 }
