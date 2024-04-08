@@ -28,16 +28,38 @@ class _LoginViewState extends State<LoginView> {
 
     ServiceCall.post(parameter, SVKey.login, withSuccess: (responseObj) async {
       Globs.hideHUD();
-      if (responseObj[KKey.status] == "OK") {
+
+      if (responseObj[KKey.code] == 200) {
         Globs.udSet(responseObj[KKey.payload] as Map? ?? {}, Globs.userPayload);
         Globs.udBoolSet(true, Globs.userLogin);
-        Globs.udStringToken(
-            'token', responseObj['responseData']['accessToken']);
+
+        // Globs.udStringToken(
+        //     'token', responseObj['responseData']['accessToken']);
+        Globs.udStringSet(
+          responseObj['data'][KKey.id],
+          'userId',
+        );
+        Globs.udStringSet(
+          responseObj['data'][KKey.fullName],
+          'fullName',
+        );
+        Globs.udStringSet(
+          responseObj['data'][KKey.email],
+          'email',
+        );
+        Globs.udStringSet(
+          responseObj['data'][KKey.avatar],
+          'avatar',
+        );
+        Globs.udIntSet(
+          responseObj['data'][KKey.phone],
+          'phone',
+        );
 
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) => const OnBoardingView(),
+              builder: (context) => const OnBoardingView(isLogin: true),
             ),
             (route) => false);
         // await prefs?.setString('token', responseObj['accessToken']);

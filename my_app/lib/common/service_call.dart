@@ -12,15 +12,11 @@ class ServiceCall {
       locator<NavigationService>();
   static Map userPayload = {};
 
-  static void post(Map<String, dynamic> parameter, String path,
+  static void post(Map<dynamic, dynamic> parameter, String path,
       {bool isToken = false, ResSuccess? withSuccess, ResFailure? failure}) {
     Future(() {
       try {
         var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-
-        // if(isToken) {
-        //   headers["token"] = "";
-        // }
 
         http
             .post(Uri.parse(path), body: parameter, headers: headers)

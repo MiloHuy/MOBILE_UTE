@@ -2,21 +2,19 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:my_app/common/globs.dart';
+import 'package:my_app/model/order.model.dart';
 import 'package:my_app/model/product.model.dart';
 
-class AllProductRequest {
-  static const String url = SVKey.getAllProducts;
+class AddToCart {
+  static String url = SVKey.addToCart;
 
-  static List<Products> parseProduct(String responseBody) {
-    var list = json.decode(responseBody) as List<Products>;
-    List<Products> products = list
-        .map((model) => Products.fromJSON(model as Map<String, dynamic>))
-        .toList();
-    return products;
-  }
-
-  static Future<List<Products>> fetchAllProducts() async {
-    final response = await http.get(Uri.parse(url));
+  static Future<List<Products>> handleAddToCart(Orders product) async {
+    final uri = Uri.parse(url);
+    final response = await http.post(
+      uri,
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(product),
+    );
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonData = json.decode(response.body);
@@ -29,7 +27,7 @@ class AllProductRequest {
 
       return products;
     } else {
-      throw Exception('Không thể lấy danh sách');
+      throw Exception('Failed to load products');
     }
   }
 }

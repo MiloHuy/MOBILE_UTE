@@ -83,7 +83,7 @@ class Globs {
 }
 
 class SVKey {
-  static const mainUrl = "http://192.168.255.1:3001";
+  static const mainUrl = "http://192.168.255.1:4001";
   static const baseUrl = '$mainUrl/api';
   static const nodeUrl = mainUrl;
 
@@ -92,15 +92,25 @@ class SVKey {
   static const svForgotPasswordRequest = '$baseUrl/auth/forgot-password/';
   static const svForgotPasswordVerify = '$baseUrl/auth/verify-otp';
   static const svForgotPasswordSetNew = '${baseUrl}forgot_password_set_new';
+
+  static const getAllProducts = '$baseUrl/products/all';
+  static const getProductByCategory = '$baseUrl/filter/product/:categoryName';
+  static const getAllBestProducts = '$baseUrl/product/bestSeller';
+  static const searchProduct = '$baseUrl/products/search';
+  static const addToCart = '$baseUrl/product/addToCart';
 }
 
 class KKey {
+  static const id = '_id';
+  static const code = "code";
   static const payload = "payload";
   static const status = "status";
   static const message = "message";
+  static const phone = "phone";
   static const authToken = "auth_token";
-  static const name = "name";
+  static const fullName = "fullName";
   static const email = "email";
+  static const avatar = "avatar";
   static const mobile = "mobile";
   static const address = "address";
   static const userId = "user_id";

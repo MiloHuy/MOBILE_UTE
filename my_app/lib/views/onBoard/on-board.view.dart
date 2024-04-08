@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/features/list/ListBestProduct.dart';
 import 'package:my_app/features/list/ListProducts.dart';
+import 'package:my_app/main.dart';
 import 'package:my_app/model/product.model.dart';
-import 'package:my_app/services/products/all-products.svc.dart';
+import 'package:my_app/services/products/productByCategoryName.svc.dart';
+import 'package:my_app/services/products/search-product.svc.dart';
 import 'package:my_app/views/login/login.view.dart';
+import 'package:my_app/views/profile/profile.view.dart';
+import 'package:rxdart/rxdart.dart';
 
 class OnBoardingView extends StatefulWidget {
-  const OnBoardingView({super.key});
+  final bool isLogin;
+  const OnBoardingView({Key? key, this.isLogin = false}) : super(key: key);
 
   @override
   State<OnBoardingView> createState() => _OnBoardingViewState();
@@ -15,21 +20,43 @@ class OnBoardingView extends StatefulWidget {
 
 class _OnBoardingViewState extends State<OnBoardingView> {
   List<Products> allProducts = [];
+  final TextEditingController _searchController = TextEditingController();
+  final BehaviorSubject<String> _searchQuery = BehaviorSubject<String>();
 
   @override
   void initState() {
     super.initState();
 
-    AllProductRequest.fetchAllProducts().then((data) {
+    AllProductByCategoryName.fetchProductByCategoryName('CAFE').then((data) {
       setState(() {
         allProducts = data;
       });
     });
+
+    _searchQuery.stream
+        .debounceTime(const Duration(milliseconds: 500))
+        .listen((query) {
+      AllProductSearch.fetchProductByCategoryName(query)
+          .then((value) => setState(() {
+                allProducts = value;
+              }));
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchQuery.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+
+    final avatarUrl = prefs?.getString('avatar') ?? '';
+    final email = prefs?.getString('email') ?? '';
+    final fullName = prefs?.getString('fullName') ?? '';
+    final phone = prefs?.getInt('phone') ?? '';
 
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
@@ -50,19 +77,35 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             TextButton(
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
+                  border:
+                      widget.isLogin ? null : Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Text('Login',
-                    style: GoogleFonts.nunito(color: Colors.black)),
+                child: widget.isLogin
+                    ? CircleAvatar(
+                        backgroundImage: NetworkImage(avatarUrl),
+                      )
+                    : Text('Login',
+                        style: GoogleFonts.nunito(color: Colors.black)),
               ),
               onPressed: () {
                 // Navigate to the login page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginView()),
-                );
+                widget.isLogin
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfileView(
+                                  avatarUrl: avatarUrl,
+                                  email: email,
+                                  name: fullName,
+                                  phone: phone as int,
+                                )))
+                    : Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginView()),
+                      );
               },
             ),
           ],
@@ -79,36 +122,61 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                   border: Border.all(color: Colors.grey),
                 ),
                 child: TextField(
+                  controller: _searchController,
                   decoration: InputDecoration(
                     hintText: 'Search',
                     hintStyle: GoogleFonts.nunito(),
                     icon: const Icon(Icons.search),
                     border: InputBorder.none,
                   ),
+                  onChanged: (value) {
+                    _searchQuery.add(value);
+                  },
                 ),
               ),
-              Center(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Wrap(
-                      alignment: WrapAlignment.start,
-                      spacing: 20,
-                      children: <Widget>[
-                        Chip(
-                          label: Text('CAFE', style: GoogleFonts.nunito()),
-                        ),
-                        Chip(
-                          label: Text('TEA', style: GoogleFonts.nunito()),
-                        ),
-                        Chip(
-                          label: Text('JUICE', style: GoogleFonts.nunito()),
-                        ),
-                      ],
-                    ),
+              Wrap(
+                alignment: WrapAlignment.start,
+                spacing: 20,
+                children: <Widget>[
+                  ActionChip(
+                    label: Text('CAFE',
+                        style: GoogleFonts.nunito(fontWeight: FontWeight.bold)),
+                    onPressed: () {
+                      AllProductByCategoryName.fetchProductByCategoryName(
+                              'CAFE')
+                          .then((data) {
+                        setState(() {
+                          allProducts = data;
+                        });
+                      });
+                    },
                   ),
-                ),
+                  ActionChip(
+                    label: Text('TEA',
+                        style: GoogleFonts.nunito(fontWeight: FontWeight.bold)),
+                    onPressed: () {
+                      AllProductByCategoryName.fetchProductByCategoryName('TEA')
+                          .then((data) {
+                        setState(() {
+                          allProducts = data;
+                        });
+                      });
+                    },
+                  ),
+                  ActionChip(
+                    label: Text('JUICE',
+                        style: GoogleFonts.nunito(fontWeight: FontWeight.bold)),
+                    onPressed: () {
+                      AllProductByCategoryName.fetchProductByCategoryName(
+                              'JUICE')
+                          .then((data) {
+                        setState(() {
+                          allProducts = data;
+                        });
+                      });
+                    },
+                  ),
+                ],
               ),
               SingleChildScrollView(
                 child: Column(
@@ -122,7 +190,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                           style: GoogleFonts.nunito(
                               fontSize: 24,
                               fontWeight: FontWeight.w800,
-                              color: Colors.green)),
+                              color: Colors.black)),
                     ),
                     Flexible(
                       child: SizedBox(
@@ -134,9 +202,11 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                     Flexible(
                       child: SizedBox(
                         height: media.height, // adjust this value as needed
-                        child: const Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: ListProducts()),
+                        child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: ListProducts(
+                              allProductsData: allProducts,
+                            )),
                       ),
                     ),
                   ],
