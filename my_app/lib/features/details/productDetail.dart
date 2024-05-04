@@ -1,25 +1,31 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_app/common/extension.dart';
-import 'package:my_app/common/globs.dart';
-import 'package:my_app/common/service_call.dart';
+import 'package:my_app/common_widgets/button_icon.dart';
+import 'package:my_app/common_widgets/modalNotification.dart';
+import 'package:my_app/features/select/SelectSizeProduct.dart';
 import 'package:my_app/main.dart';
+import 'package:my_app/model/productAddToCart.model.dart';
+import 'package:my_app/services/orders/addToCart.svc.dart';
+import 'package:my_app/views/payment-product/payment.view.dart';
 
 class ProductDetails {
   final String id;
   final String name;
   final String imageUrl;
-  final double price;
+  final List<int> price;
+  final List<String> size;
+  final String brandId;
   final String description;
 
-  ProductDetails(
-      {required this.id,
-      required this.name,
-      required this.imageUrl,
-      required this.price,
-      required this.description});
+  ProductDetails({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.price,
+    required this.brandId,
+    required this.description,
+    required this.size,
+  });
 }
 
 class ProductDetailsDetailScreen extends StatefulWidget {
@@ -36,25 +42,46 @@ class _ProductDetailsDetailScreenState
     extends State<ProductDetailsDetailScreen> {
   int quantity = 1;
   final userId = prefs?.getString('userId') ?? '';
+  bool _isLoading = false;
+  String? selectedSize;
 
-  void serviceCallAddToCart(Map<dynamic, dynamic> parameter) {
-    Globs.showHUD();
-
-    ServiceCall.post(parameter, SVKey.addToCart,
-        withSuccess: (responseObj) async {
-      Globs.hideHUD();
-
-      if (responseObj[KKey.code] == 200) {
-        print('asdads');
+  Future<void> addToCart() async {
+    setState(() {
+      _isLoading = true;
+    });
+    AddToCart.postRequest(
+      {
+        "userId": userId,
+        "productId": widget.productDetails.id,
+        "productPrice": widget.productDetails.price[0] * quantity,
+        "productQuanitiOrder": quantity,
+        "productSize": widget.productDetails.size,
+      },
+    ).then((value) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (value['code'] == 404) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return ModalNotification(
+              titleHeader: 'Thông báo',
+              titleContent: value['message'][0],
+            );
+          },
+        );
       } else {
-        log(responseObj[KKey.message]);
-        mdShowAlert(Globs.appName,
-            responseObj[KKey.message] as String? ?? MSG.fail, () {});
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const ModalNotification(
+              titleHeader: 'Thông báo',
+              titleContent: 'Thêm vào giỏ hàng thành công.',
+            );
+          },
+        );
       }
-    }, failure: (err) async {
-      Globs.hideHUD();
-      print('err: $err');
-      mdShowAlert(Globs.appName, err, () {});
     });
   }
 
@@ -95,9 +122,12 @@ class _ProductDetailsDetailScreenState
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text(widget.productDetails.name,
-                            style: GoogleFonts.nunito(
-                                fontSize: 30, fontWeight: FontWeight.bold)),
+                        Expanded(
+                          child: Text(widget.productDetails.name,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.nunito(
+                                  fontSize: 30, fontWeight: FontWeight.bold)),
+                        ),
                         Row(
                           children: <Widget>[
                             IconButton(
@@ -133,7 +163,7 @@ class _ProductDetailsDetailScreenState
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Giá: ${widget.productDetails.price}',
+                      'Giá: ${widget.productDetails.price.join(", ")}',
                       style: GoogleFonts.nunito(fontSize: 25),
                     ),
                   ),
@@ -146,8 +176,27 @@ class _ProductDetailsDetailScreenState
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          'Size: ',
+                          style: GoogleFonts.nunito(fontSize: 20),
+                        ),
+                        const SizedBox(width: 10),
+                        SelectSize(
+                          sizes: widget.productDetails.size,
+                          onSizeChanged: (String? value) {
+                            // Handle size change here
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Tổng tiền: ${widget.productDetails.price * quantity}',
+                      'Tổng tiền: ${widget.productDetails.price[0] * quantity}',
                       style: GoogleFonts.nunito(fontSize: 20),
                     ),
                   ),
@@ -157,28 +206,45 @@ class _ProductDetailsDetailScreenState
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.green,
-                  minimumSize: const Size(double.infinity, 50),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ButtonIconWidget(
+                    icon: Icons.shopping_cart,
+                    title: 'Add to Cart',
+                    color: Colors.green,
+                    onPressed: addToCart,
+                  ),
                 ),
-                icon: const Icon(Icons.shopping_cart),
-                label: Text(
-                  'Add to Cart',
-                  style: GoogleFonts.nunito(fontSize: 20),
+                const SizedBox(width: 10), // Add some space between the buttons
+                Expanded(
+                  child: ButtonIconWidget(
+                    icon: Icons.payment,
+                    title: 'Payment',
+                    color: Colors.blue,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentScreen(
+                            product: ProductAddToCart(
+                              id: widget.productDetails.id,
+                              productName: widget.productDetails.name,
+                              price: widget.productDetails.price,
+                              size: widget.productDetails.size,
+                              description: widget.productDetails.description,
+                              productImg: widget.productDetails.imageUrl,
+                              brandId: widget.productDetails.brandId,
+                              isLiked: false,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-                onPressed: () {
-                  serviceCallAddToCart({
-                    "userId": userId,
-                    "productId": widget.productDetails.id,
-                    "productName": widget.productDetails.name,
-                    "productImg": widget.productDetails.imageUrl,
-                    "productPrice": widget.productDetails.price.toString(),
-                    "productQuantityOrder": quantity.toString(),
-                    "productSize": 'M',
-                  });
-                }),
+              ],
+            ),
           ),
         ],
       ),

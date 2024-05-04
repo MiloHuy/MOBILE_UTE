@@ -56,7 +56,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     final avatarUrl = prefs?.getString('avatar') ?? '';
     final email = prefs?.getString('email') ?? '';
     final fullName = prefs?.getString('fullName') ?? '';
-    final phone = prefs?.getInt('phone') ?? '';
+    final phone = prefs?.getString('phone') ?? '';
 
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
@@ -99,7 +99,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                                   avatarUrl: avatarUrl,
                                   email: email,
                                   name: fullName,
-                                  phone: phone as int,
+                                  phone: phone,
                                 )))
                     : Navigator.push(
                         context,
@@ -141,6 +141,15 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                   ActionChip(
                     label: Text('CAFE',
                         style: GoogleFonts.nunito(fontWeight: FontWeight.bold)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          10), // Điều chỉnh giá trị border radius theo ý muốn
+                      side: BorderSide(
+                        color: Colors.grey
+                            .withOpacity(0.5), // Màu của viền với độ mờ 50%
+                        width: 1, // Độ dày của viền
+                      ),
+                    ),
                     onPressed: () {
                       AllProductByCategoryName.fetchProductByCategoryName(
                               'CAFE')
@@ -154,6 +163,15 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                   ActionChip(
                     label: Text('TEA',
                         style: GoogleFonts.nunito(fontWeight: FontWeight.bold)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          10), // Điều chỉnh giá trị border radius theo ý muốn
+                      side: BorderSide(
+                        color: Colors.grey
+                            .withOpacity(0.5), // Màu của viền với độ mờ 50%
+                        width: 1, // Độ dày của viền
+                      ),
+                    ),
                     onPressed: () {
                       AllProductByCategoryName.fetchProductByCategoryName('TEA')
                           .then((data) {
@@ -166,6 +184,15 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                   ActionChip(
                     label: Text('JUICE',
                         style: GoogleFonts.nunito(fontWeight: FontWeight.bold)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          10), // Điều chỉnh giá trị border radius theo ý muốn
+                      side: BorderSide(
+                        color: Colors.grey
+                            .withOpacity(0.5), // Màu của viền với độ mờ 50%
+                        width: 1, // Độ dày của viền
+                      ),
+                    ),
                     onPressed: () {
                       AllProductByCategoryName.fetchProductByCategoryName(
                               'JUICE')
@@ -184,8 +211,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                   children: [
                     // Other widgets
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5.0, vertical: 5.0),
+                      padding: const EdgeInsets.symmetric(vertical: 2.0),
                       child: Text('NHỮNG SẢN PHẨM NỔI BẬT',
                           style: GoogleFonts.nunito(
                               fontSize: 24,

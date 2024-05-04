@@ -51,9 +51,13 @@ class _LoginViewState extends State<LoginView> {
           responseObj['data'][KKey.avatar],
           'avatar',
         );
-        Globs.udIntSet(
+        Globs.udStringSet(
           responseObj['data'][KKey.phone],
           'phone',
+        );
+        Globs.udStringSet(
+          responseObj['data'][KKey.address],
+          'address',
         );
 
         Navigator.pushAndRemoveUntil(

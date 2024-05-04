@@ -1,19 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/entypo_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/services/products/react-product.svc.dart';
 
-class ProductWidget extends StatelessWidget {
+class ProductWidgetView extends StatefulWidget {
+  final String productId;
   final String imageUrl;
   final String productName;
-  final double price;
+  final List<int> price;
   final String description;
+  final bool isLiked;
 
-  const ProductWidget({
+  const ProductWidgetView({
     Key? key,
     required this.imageUrl,
     required this.productName,
     required this.price,
     required this.description,
+    required this.productId,
+    this.isLiked = false,
   }) : super(key: key);
+
+  @override
+  State<ProductWidgetView> createState() => _ProductWidgetViewState();
+}
+
+class _ProductWidgetViewState extends State<ProductWidgetView> {
+  bool isLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    isLiked = widget.isLiked;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +52,7 @@ class ProductWidget extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
-                      imageUrl,
+                      widget.imageUrl,
                       fit: BoxFit.cover,
                     ),
                   )),
@@ -83,11 +103,14 @@ class ProductWidget extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Row(
                     children: [
-                      Text(
-                        textAlign: TextAlign.end,
-                        productName,
-                        style: GoogleFonts.nunito(
-                            fontWeight: FontWeight.bold, fontSize: 14),
+                      Expanded(
+                        child: Text(
+                          widget.productName,
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.nunito(
+                              fontWeight: FontWeight.bold, fontSize: 14),
+                        ),
                       )
                     ],
                   )),
@@ -98,7 +121,7 @@ class ProductWidget extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     textAlign: TextAlign.start,
-                    description,
+                    widget.description,
                     maxLines: 2, // Limit the text to 2 lines
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.nunito(
@@ -111,13 +134,24 @@ class ProductWidget extends StatelessWidget {
                     children: [
                       Text(
                         textAlign: TextAlign.start,
-                        price.toString(),
+                        widget.price[0].toString(),
                         style: GoogleFonts.nunito(
                             fontWeight: FontWeight.bold, fontSize: 15),
                       ),
                       IconButton(
-                          onPressed: () => {},
-                          icon: const Icon(Icons.add_circle_outline))
+                          onPressed: () => {
+                                ReactProduct.likeProduct(widget.productId)
+                                    .then((value) => {
+                                          setState(() {
+                                            isLiked = !isLiked;
+                                          })
+                                        })
+                              },
+                          icon: Icon(
+                            isLiked ? Entypo.heart : Entypo.heart_empty,
+                            size: 20,
+                            color: isLiked ? Colors.red : Colors.black,
+                          ))
                     ],
                   ))
             ],

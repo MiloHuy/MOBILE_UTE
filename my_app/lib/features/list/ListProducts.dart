@@ -40,18 +40,22 @@ class _ListProducts extends State<ListProducts> {
                     id: widget.allProductsData[i].id,
                     name: widget.allProductsData[i].productName,
                     imageUrl: widget.allProductsData[i].productImg,
-                    price: widget.allProductsData[i].price.toDouble(),
+                    price: widget.allProductsData[i].price,
                     description: widget.allProductsData[i].description,
+                    size: widget.allProductsData[i].size,
+                    brandId: widget.allProductsData[i].brandId,
                   ),
                 ),
               ),
             );
           },
-          child: ProductWidget(
+          child: ProductWidgetView(
             imageUrl: widget.allProductsData[i].productImg,
             productName: widget.allProductsData[i].productName,
-            price: widget.allProductsData[i].price.toDouble(),
+            price: widget.allProductsData[i].price,
             description: widget.allProductsData[i].description,
+            productId: widget.allProductsData[i].id,
+            isLiked: widget.allProductsData[i].isLiked,
           ),
         );
       },

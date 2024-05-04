@@ -3,8 +3,8 @@ class Orders {
   final String productId;
   final String productName;
   final int productPrice;
-  final int productQuantityOrder;
-  final String productSize;
+  final int productQuanitiOrder;
+  final List<String> productSize;
   final String productImg;
 
   Orders({
@@ -12,7 +12,7 @@ class Orders {
     required this.productId,
     required this.productName,
     required this.productPrice,
-    required this.productQuantityOrder,
+    required this.productQuanitiOrder,
     required this.productSize,
     required this.productImg,
   });
@@ -23,13 +23,9 @@ class Orders {
       productId: json['productId'] ?? '',
       productName: json['productName'] ?? '',
       productPrice: json['productPrice'] ?? 0,
-      productQuantityOrder: json['productQuantityOrder'] ?? 0,
-      productSize: json['productSize'] ?? '',
+      productQuanitiOrder: json['productQuanitiOrder'] ?? 0,
+      productSize: (json['productSize'] as List<dynamic>).cast<String>(),
       productImg: json['productImg'] ?? '',
     );
-  }
-
-  Object? toJSON() {
-    return null;
   }
 }

@@ -98,6 +98,12 @@ class SVKey {
   static const getAllBestProducts = '$baseUrl/product/bestSeller';
   static const searchProduct = '$baseUrl/products/search';
   static const addToCart = '$baseUrl/product/addToCart';
+  static const likeProduct = '$baseUrl/product/like/:productId';
+  static const productOrderStatus = '$baseUrl/product/allOrderStatus/:userId';
+
+  static const updateUser = '$baseUrl/update/users/:userId';
+
+  static const paymentProduct = '$baseUrl/payment/paymentProduct';
 }
 
 class KKey {

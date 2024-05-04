@@ -2,7 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/features/details/productDetail.dart';
-import 'package:my_app/model/product.model.dart';
 import 'package:my_app/services/products/all-best-product.svc.dart';
 
 class ListBestProduct extends StatefulWidget {
@@ -13,7 +12,7 @@ class ListBestProduct extends StatefulWidget {
 }
 
 class _ListBestProduct extends State<ListBestProduct> {
-  List<Products> allBestProducts = [];
+  List<dynamic> allBestProducts = [];
 
   @override
   void initState() {
@@ -42,8 +41,10 @@ class _ListBestProduct extends State<ListBestProduct> {
                       id: allBestProducts[itemIndex].id,
                       name: allBestProducts[itemIndex].productName,
                       imageUrl: allBestProducts[itemIndex].productImg,
-                      price: allBestProducts[itemIndex].price.toDouble(),
+                      price: allBestProducts[itemIndex].price,
                       description: allBestProducts[itemIndex].description,
+                      size: allBestProducts[itemIndex].size,
+                      brandId: allBestProducts[itemIndex].brandId,
                     ),
                   ),
                 ),
@@ -58,13 +59,9 @@ class _ListBestProduct extends State<ListBestProduct> {
                       allBestProducts[itemIndex].productImg.toString()),
                   fit: BoxFit.cover,
                 ),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 2,
-                    offset: const Offset(3, 3),
-                  ),
+                      color: Colors.grey, blurRadius: 5, offset: Offset(3, 3)),
                 ],
               ),
               child: Stack(
@@ -82,7 +79,7 @@ class _ListBestProduct extends State<ListBestProduct> {
                         child: Text(
                           allBestProducts[itemIndex].productName.toString(),
                           style: GoogleFonts.nunito(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.black.withOpacity(0.8),
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
                           ),
@@ -92,7 +89,7 @@ class _ListBestProduct extends State<ListBestProduct> {
                       bottom: 10.0,
                       right: 10.0,
                       child: Text(
-                        allBestProducts[itemIndex].price.toString(),
+                        allBestProducts[itemIndex].price[0].toString(),
                         style: GoogleFonts.nunito(
                           color: Colors.white.withOpacity(0.8),
                           fontSize: 20.0,

@@ -19,7 +19,7 @@ class AllBestProduct {
     var response = await http.get(Uri.parse(urlApi));
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonData = json.decode(response.body);
+      final jsonData = json.decode(response.body);
 
       final List<dynamic> productsData = jsonData['data'];
 
