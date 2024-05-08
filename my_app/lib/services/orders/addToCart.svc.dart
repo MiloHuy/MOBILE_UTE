@@ -18,11 +18,10 @@ class AddToCart {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        // If the server returns an unexpected response, throw an exception.
         return jsonDecode(response.body);
       }
     } catch (e) {
-      print(e);
+      print('Error add to cart: $e');
       rethrow;
     }
   }

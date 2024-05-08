@@ -104,6 +104,8 @@ class SVKey {
   static const updateUser = '$baseUrl/update/users/:userId';
 
   static const paymentProduct = '$baseUrl/payment/paymentProduct';
+  static const allAddressOrder = '$baseUrl/addressOrders/:userId';
+  static const addAddressOrder = '$baseUrl/addressOrder/new';
 }
 
 class KKey {

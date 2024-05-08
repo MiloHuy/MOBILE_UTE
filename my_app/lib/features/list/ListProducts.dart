@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/features/details/detailProduct.dart';
 import 'package:my_app/features/details/productDetail.dart';
 import 'package:my_app/model/product.model.dart';
 import 'package:my_app/widgets/product_widgets.dart';
@@ -35,8 +36,8 @@ class _ListProducts extends State<ListProducts> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProductDetailsDetailScreen(
-                  productDetails: ProductDetails(
+                builder: (context) => DetailScreen(
+                  product: ProductDetails(
                     id: widget.allProductsData[i].id,
                     name: widget.allProductsData[i].productName,
                     imageUrl: widget.allProductsData[i].productImg,

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_app/common_widgets/button_shadow.dart';
 import 'package:my_app/main.dart';
 import 'package:my_app/services/users/updateUser.svc.dart';
 
@@ -196,60 +197,27 @@ class _EditProfileViewState extends State<EditProfileView> {
                             return null;
                           },
                         ),
-                        SizedBox(
-                          height: 80,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              ElevatedButton(
-                                  onPressed: () {
-                                    updateUser();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    elevation: 0,
-                                  ),
-                                  child: Material(
-                                    elevation: 5, // Độ nổi của shadow
-                                    shadowColor: Colors.black,
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 20),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      child: Text(
-                                        'Lưu',
-                                        style: GoogleFonts.nunito(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  )),
-                              const SizedBox(width: 20),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                ),
-                                child: Text('Hủy',
-                                    style: GoogleFonts.nunito(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black)),
-                              ),
-                            ],
-                          ),
-                        )
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Expanded(
+                                child: ButtonShadowWidget(
+                              title: 'Cập nhật',
+                              color: Colors.green,
+                              onPressed: updateUser,
+                            )),
+                            const SizedBox(width: 10),
+                            Expanded(
+                                child: ButtonShadowWidget(
+                              title: 'Hủy',
+                              color: Colors.red,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ))
+                          ],
+                        ),
                       ],
                     ),
                   ),

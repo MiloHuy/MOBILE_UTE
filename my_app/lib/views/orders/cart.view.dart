@@ -14,8 +14,10 @@ class _CartViewState extends State<CartView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title:
-              Text('Giỏ hàng của bạn', style: GoogleFonts.nunito(fontSize: 24)),
+          centerTitle: true,
+          title: Text('GIỎ HÀNG CỦA BẠN',
+              style: GoogleFonts.nunito(
+                  fontSize: 20, fontWeight: FontWeight.w400)),
         ),
         body: const ListProductAddToCart());
   }

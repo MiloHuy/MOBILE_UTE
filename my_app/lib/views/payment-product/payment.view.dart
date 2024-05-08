@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/common_widgets/button_shadow.dart';
 import 'package:my_app/main.dart';
+import 'package:my_app/model/addressOrder.model.dart';
 import 'package:my_app/model/productAddToCart.model.dart';
+import 'package:my_app/services/orders/all-address-order.svc.dart';
 import 'package:my_app/services/payment/paymentProduct.svc.dart';
-import 'package:my_app/utils/format.utils.dart';
+import 'package:my_app/views/payment-product/sections/addressSections.dart';
+import 'package:my_app/views/payment-product/sections/paymentMethodSection.dart';
+import 'package:my_app/views/payment-product/sections/totalAmountSection.dart';
 import 'package:my_app/widgets/product_cart_vertical_widget.dart';
 
 class PaymentScreen extends StatefulWidget {
@@ -17,28 +22,32 @@ class PaymentScreen extends StatefulWidget {
 
 class _PaymentScreenState extends State<PaymentScreen> {
   final userId = prefs?.getString('userId') ?? '';
-  bool _isLoading = false;
+  int productQuantity = 1;
+  List<AddressOrder> allAddressOrders = [];
+
+  int selectedAddressIndex = 0;
+
+  void handleAddressIndexChanged(int index) {
+    setState(() {
+      selectedAddressIndex = index;
+    });
+  }
 
   Future<void> paymentProduct() async {
-    setState(() {
-      _isLoading = true;
-    });
     PaymentProduct.postRequest(
       {
         "userId": userId,
-        "productId": [widget.product.id],
-        "brandId": [widget.product.brandId],
-        "productPrice": [widget.product.price[0]],
-        "productQuanitiOrder": '1',
-        "productSize": [widget.product.size[0]],
-        "addressOrder": "123 Main Street, City, Country",
+        "productId": widget.product.id,
+        "brandId": widget.product.brandId,
+        "productPrice": widget.product.price[0] * productQuantity,
+        "productQuanitiOrder": productQuantity,
+        "productSize": widget.product.size[0],
+        "receiverName": allAddressOrders[selectedAddressIndex].receiverName,
+        "phone": allAddressOrders[selectedAddressIndex].phone,
+        "addressOrder": allAddressOrders[selectedAddressIndex].addressOrder,
       },
     ).then((value) {
       print('Value: $value');
-      setState(() {
-        _isLoading = false;
-      });
-
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -49,7 +58,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
                     color: Colors.black)),
-            content: Text('User updated successfully',
+            content: Text('Thanh toán thành công',
                 style: GoogleFonts.nunito(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
@@ -68,6 +77,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
     });
   }
 
+  void fetchAllAddressOrders() async {
+    AllAddressOrderService.getAll(userId).then((data) {
+      setState(() {
+        allAddressOrders = data;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAllAddressOrders();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,65 +103,46 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
       body: ListView(
         children: <Widget>[
-          ProductCard(product: widget.product, price: widget.product.price[0]),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text('Địa chỉ',
-                    style: GoogleFonts.nunito(
-                        fontSize: 20, fontWeight: FontWeight.bold)),
-                const Text('123 Main Street, City, Country'),
-                const SizedBox(height: 20),
-                Text('Phương thức thanh toán',
-                    style: GoogleFonts.nunito(
-                        fontSize: 20, fontWeight: FontWeight.bold)),
-                const Text('COD', style: TextStyle(color: Colors.red)),
-              ],
-            ),
+          ProductCard(
+            quantity: productQuantity,
+            product: widget.product,
+            price: widget.product.price[0],
+            onChangedQuantity: (quantity) {
+              setState(() {
+                productQuantity = quantity;
+              });
+            },
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 20), // Thụt vào từ cả hai đầu
-            child: ConstrainedBox(
-              constraints: const BoxConstraints.tightFor(
-                  width: 200), // Đặt chiều rộng của nút
-              child: ElevatedButton(
-                onPressed: () {
-                  paymentProduct();
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      Colors.transparent), // Đặt màu nền là trong suốt
-                  side: MaterialStateProperty.all<BorderSide>(const BorderSide(
-                      color: Colors.grey, width: 1)), // Đặt viền
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  elevation: MaterialStateProperty.all<double>(0),
-                  shadowColor: MaterialStateProperty.all<Color>(Colors.black),
-                  overlayColor:
-                      MaterialStateProperty.all<Color>(Colors.transparent),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Text(
-                    'Thanh toán ${formatNumber(widget.product.price[0])} Đ',
-                    style: GoogleFonts.nunito(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.red,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          AddressSection(
+              allAddressOrders: allAddressOrders,
+              handleAddressIndexChanged: handleAddressIndexChanged),
+          const PaymentMethodSection(),
+          TotalAmountSection(
+            totalAmount: widget.product.price[0] * productQuantity,
+          ),
+          const SizedBox(height: 20),
+          PaymentButton(
+            onPressed: paymentProduct,
           ),
         ],
       ),
     );
+  }
+}
+
+class PaymentButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const PaymentButton({Key? key, required this.onPressed}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: ButtonShadowWidget(
+          title: 'THANH TOÁN',
+          onPressed: onPressed,
+          color: Colors.red,
+        ));
   }
 }

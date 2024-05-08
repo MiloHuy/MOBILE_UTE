@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/common_widgets/button_shadow.dart';
 import 'package:my_app/main.dart';
+import 'package:my_app/model/order.model.dart';
 import 'package:my_app/model/productAddToCart.model.dart';
 import 'package:my_app/services/orders/all-product-addToCart.svc.dart';
-import 'package:my_app/widgets/product_cart_vertical_widget.dart';
+import 'package:my_app/widgets/product_card_widget.dart';
 
 class ListProductAddToCart extends StatefulWidget {
   const ListProductAddToCart({super.key});
@@ -22,12 +24,15 @@ class _ListProductAddToCartState extends State<ListProductAddToCart> {
   void initState() {
     super.initState();
 
+    fetchAllProducts();
+  }
+
+  void fetchAllProducts() {
     AllProductAddToCart.getAll({"status": "NOT_ORDER"}, userId).then((value) {
       setState(() {
         allProducts = value.products;
         productPrice = value.productPrice;
       });
-      // print('All Products: $allProducts');
     }).catchError((error) {
       print('Error getting all products: $error');
     });
@@ -36,30 +41,60 @@ class _ListProductAddToCartState extends State<ListProductAddToCart> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(5),
       child: Column(
         children: [
           Expanded(
             child: ListView.builder(
+              shrinkWrap: true,
               itemCount: productPrice.length,
               itemBuilder: (context, index) {
-                return Dismissible(
-                  key: Key(index.toString()),
-                  direction: DismissDirection.endToStart,
-                  background: Container(
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 20.0),
-                    color: Colors.red,
-                    child: const Icon(Icons.delete, color: Colors.white),
-                  ),
-                  child: ProductCard(
-                    product: allProducts[index],
-                    price: productPrice[index],
-                  ),
-                  onDismissed: (direction) {
-                    // Handle dismissal
-                  },
-                );
+                if (index < productPrice.length && index < allProducts.length) {
+                  final cartItems = allProducts[index];
+                  return Container(
+                      margin: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.only(bottom: 2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey[300]!,
+                              blurRadius: 0.5,
+                              offset: const Offset(0, 3)),
+                        ],
+                      ),
+                      child: ProductCardWidget(
+                        product: Orders(
+                            userId: userId,
+                            productId: cartItems.id,
+                            productImg: cartItems.productImg,
+                            productName: cartItems.productName,
+                            productPrice: cartItems.price[0],
+                            productQuanitiOrder: 1,
+                            productSize: cartItems.size),
+                        buttonFunction: const Row(
+                          children: [
+                            SizedBox(width: 10),
+                            Icon(
+                              Icons.add,
+                              size: 20,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              '123',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Icon(Icons.remove, size: 20),
+                            SizedBox(width: 10),
+                          ],
+                        ),
+                      ));
+                }
+                return null;
               },
             ),
           ),
@@ -70,20 +105,13 @@ class _ListProductAddToCartState extends State<ListProductAddToCart> {
                 'Tổng đơn hàng: ${productPrice.isNotEmpty ? productPrice.reduce((a, b) => a + b) : 0}',
                 style: GoogleFonts.nunito(fontSize: 18, color: Colors.black),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle payment
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text('Thanh toán',
-                    style:
-                        GoogleFonts.nunito(fontSize: 16, color: Colors.white)),
-              ),
+              const SizedBox(width: 30),
+              Expanded(
+                  child: ButtonShadowWidget(
+                title: 'Thanh toán',
+                color: Colors.red,
+                onPressed: () {},
+              ))
             ],
           ),
         ],

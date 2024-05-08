@@ -29,7 +29,7 @@ class ButtonIconWidget extends StatelessWidget {
       icon: Icon(icon),
       label: Text(
         title,
-        style: GoogleFonts.nunito(fontSize: 20),
+        style: GoogleFonts.nunito(fontSize: 18),
       ),
       onPressed: onPressed,
     );

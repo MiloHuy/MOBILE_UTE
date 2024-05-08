@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/common/locator.dart';
 
@@ -21,9 +20,6 @@ class ServiceCall {
         http
             .post(Uri.parse(path), body: parameter, headers: headers)
             .then((value) {
-          if (kDebugMode) {
-            print('Response: ${value.body}');
-          }
           try {
             var jsonObj =
                 json.decode(value.body) as Map<String, dynamic>? ?? {};
@@ -36,6 +32,7 @@ class ServiceCall {
           if (failure != null) failure(e.toString());
         });
       } catch (err) {
+        print('Error Login: $err');
         if (failure != null) failure(err.toString());
       }
     });

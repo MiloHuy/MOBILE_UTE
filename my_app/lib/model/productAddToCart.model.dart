@@ -62,6 +62,20 @@ class ProductAddToCartRes {
   });
 
   factory ProductAddToCartRes.fromJson(Map<String, dynamic> json) {
+    if (json['data'] is List && json['data'].isEmpty) {
+      return ProductAddToCartRes(
+        status: json['status'],
+        message: json['message'],
+        id: '',
+        products: [],
+        productPrice: [],
+        productQuanitiOrder: [],
+        productSize: [],
+        statusOrder: '',
+        confirm: false,
+      );
+    }
+
     List<dynamic> productsData = json['data']['products'];
 
     List<ProductAddToCart> products = productsData

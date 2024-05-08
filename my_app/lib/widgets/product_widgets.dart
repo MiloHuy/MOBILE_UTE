@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/services/products/react-product.svc.dart';
+import 'package:my_app/utils/format.utils.dart';
 
 class ProductWidgetView extends StatefulWidget {
   final String productId;
@@ -133,8 +134,8 @@ class _ProductWidgetViewState extends State<ProductWidgetView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
+                        formatNumber(int.parse('${widget.price[0]}')),
                         textAlign: TextAlign.start,
-                        widget.price[0].toString(),
                         style: GoogleFonts.nunito(
                             fontWeight: FontWeight.bold, fontSize: 15),
                       ),

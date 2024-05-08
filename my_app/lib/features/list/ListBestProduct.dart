@@ -53,6 +53,7 @@ class _ListBestProduct extends State<ListBestProduct> {
             child: Container(
               margin: const EdgeInsets.all(5.0),
               decoration: BoxDecoration(
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(10.0),
                 image: DecorationImage(
                   image: NetworkImage(
@@ -60,8 +61,7 @@ class _ListBestProduct extends State<ListBestProduct> {
                   fit: BoxFit.cover,
                 ),
                 boxShadow: const [
-                  BoxShadow(
-                      color: Colors.grey, blurRadius: 5, offset: Offset(3, 3)),
+                  BoxShadow(blurRadius: 5, offset: Offset(0, 5)),
                 ],
               ),
               child: Stack(

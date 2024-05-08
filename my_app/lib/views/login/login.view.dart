@@ -6,7 +6,7 @@ import 'package:my_app/common/colors.com.dart';
 import 'package:my_app/common/extension.dart';
 import 'package:my_app/common/globs.dart';
 import 'package:my_app/common/service_call.dart';
-import 'package:my_app/common_widgets/rounded_button.dart';
+import 'package:my_app/common_widgets/button_shadow.dart';
 import 'package:my_app/common_widgets/rounded_text_field.dart';
 import 'package:my_app/views/login/forgot-password.view.dart';
 import 'package:my_app/views/login/sign-up.view.dart';
@@ -29,12 +29,12 @@ class _LoginViewState extends State<LoginView> {
     ServiceCall.post(parameter, SVKey.login, withSuccess: (responseObj) async {
       Globs.hideHUD();
 
+      print('Response: $responseObj');
+
       if (responseObj[KKey.code] == 200) {
         Globs.udSet(responseObj[KKey.payload] as Map? ?? {}, Globs.userPayload);
         Globs.udBoolSet(true, Globs.userLogin);
 
-        // Globs.udStringToken(
-        //     'token', responseObj['responseData']['accessToken']);
         Globs.udStringSet(
           responseObj['data'][KKey.id],
           'userId',
@@ -133,8 +133,11 @@ class _LoginViewState extends State<LoginView> {
                 const SizedBox(
                   height: 30,
                 ),
-                RoundedButton(
-                    title: 'Đăng nhập', onPressed: () => {submitLogin()}),
+                ButtonShadowWidget(
+                  title: 'Đăng nhập',
+                  onPressed: () => {submitLogin()},
+                  color: Colors.blue,
+                ),
                 const SizedBox(
                   height: 30,
                 ),

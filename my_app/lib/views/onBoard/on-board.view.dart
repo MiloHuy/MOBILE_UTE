@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/common_widgets/input_chip.dart';
 import 'package:my_app/features/list/ListBestProduct.dart';
 import 'package:my_app/features/list/ListProducts.dart';
 import 'package:my_app/main.dart';
@@ -138,19 +139,11 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                 alignment: WrapAlignment.start,
                 spacing: 20,
                 children: <Widget>[
-                  ActionChip(
+                  InputChipWidget(
                     label: Text('CAFE',
                         style: GoogleFonts.nunito(fontWeight: FontWeight.bold)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          10), // Điều chỉnh giá trị border radius theo ý muốn
-                      side: BorderSide(
-                        color: Colors.grey
-                            .withOpacity(0.5), // Màu của viền với độ mờ 50%
-                        width: 1, // Độ dày của viền
-                      ),
-                    ),
-                    onPressed: () {
+                    isSelected: false, // replace with your logic
+                    onSelected: (bool value) {
                       AllProductByCategoryName.fetchProductByCategoryName(
                               'CAFE')
                           .then((data) {
@@ -160,19 +153,11 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                       });
                     },
                   ),
-                  ActionChip(
+                  InputChipWidget(
                     label: Text('TEA',
                         style: GoogleFonts.nunito(fontWeight: FontWeight.bold)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          10), // Điều chỉnh giá trị border radius theo ý muốn
-                      side: BorderSide(
-                        color: Colors.grey
-                            .withOpacity(0.5), // Màu của viền với độ mờ 50%
-                        width: 1, // Độ dày của viền
-                      ),
-                    ),
-                    onPressed: () {
+                    isSelected: false, // replace with your logic
+                    onSelected: (bool value) {
                       AllProductByCategoryName.fetchProductByCategoryName('TEA')
                           .then((data) {
                         setState(() {
@@ -181,19 +166,11 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                       });
                     },
                   ),
-                  ActionChip(
+                  InputChipWidget(
                     label: Text('JUICE',
                         style: GoogleFonts.nunito(fontWeight: FontWeight.bold)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          10), // Điều chỉnh giá trị border radius theo ý muốn
-                      side: BorderSide(
-                        color: Colors.grey
-                            .withOpacity(0.5), // Màu của viền với độ mờ 50%
-                        width: 1, // Độ dày của viền
-                      ),
-                    ),
-                    onPressed: () {
+                    isSelected: false, // replace with your logic
+                    onSelected: (bool value) {
                       AllProductByCategoryName.fetchProductByCategoryName(
                               'JUICE')
                           .then((data) {
