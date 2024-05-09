@@ -29,8 +29,6 @@ class _LoginViewState extends State<LoginView> {
     ServiceCall.post(parameter, SVKey.login, withSuccess: (responseObj) async {
       Globs.hideHUD();
 
-      print('Response: $responseObj');
-
       if (responseObj[KKey.code] == 200) {
         Globs.udSet(responseObj[KKey.payload] as Map? ?? {}, Globs.userPayload);
         Globs.udBoolSet(true, Globs.userLogin);
@@ -63,7 +61,9 @@ class _LoginViewState extends State<LoginView> {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) => const OnBoardingView(isLogin: true),
+              builder: (context) => const OnBoardingView(
+                isLogin: true,
+              ),
             ),
             (route) => false);
         // await prefs?.setString('token', responseObj['accessToken']);

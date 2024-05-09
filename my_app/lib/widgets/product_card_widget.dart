@@ -22,6 +22,7 @@ class ProductCardWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             ClipRRect(
               borderRadius:
@@ -54,6 +55,7 @@ class ProductCardWidget extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(width: 20),
             Expanded(child: buttonFunction)
           ],
         ),

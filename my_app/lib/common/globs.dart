@@ -106,6 +106,10 @@ class SVKey {
   static const paymentProduct = '$baseUrl/payment/paymentProduct';
   static const allAddressOrder = '$baseUrl/addressOrders/:userId';
   static const addAddressOrder = '$baseUrl/addressOrder/new';
+  static const updateOrderStatus = '$baseUrl/product/updateOrder/:orderID';
+  static const deleteProduct = '$baseUrl/product/deleteProductInCart/:orderId';
+
+  static const allDiscount = '$baseUrl/discount/all';
 }
 
 class KKey {

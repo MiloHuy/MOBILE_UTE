@@ -13,7 +13,11 @@ import 'package:rxdart/rxdart.dart';
 
 class OnBoardingView extends StatefulWidget {
   final bool isLogin;
-  const OnBoardingView({Key? key, this.isLogin = false}) : super(key: key);
+
+  const OnBoardingView({
+    Key? key,
+    this.isLogin = false,
+  }) : super(key: key);
 
   @override
   State<OnBoardingView> createState() => _OnBoardingViewState();
@@ -91,22 +95,14 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                         style: GoogleFonts.nunito(color: Colors.black)),
               ),
               onPressed: () {
-                // Navigate to the login page
-                widget.isLogin
-                    ? Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfileView(
-                                  avatarUrl: avatarUrl,
-                                  email: email,
-                                  name: fullName,
-                                  phone: phone,
-                                )))
-                    : Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginView()),
-                      );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => widget.isLogin
+                        ? const ProfileView()
+                        : const LoginView(),
+                  ),
+                );
               },
             ),
           ],
@@ -206,7 +202,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                       child: SizedBox(
                         height: media.height, // adjust this value as needed
                         child: Padding(
-                            padding: const EdgeInsets.all(20.0),
+                            padding: const EdgeInsets.all(10.0),
                             child: ListProducts(
                               allProductsData: allProducts,
                             )),

@@ -55,7 +55,7 @@ class ItemsDetails extends StatelessWidget {
                             width: 3,
                           ),
                           Text(
-                            '1',
+                            '5',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -65,29 +65,22 @@ class ItemsDetails extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 5),
-                    const Text(
-                      '5',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 15,
-                      ),
-                    )
                   ],
                 )
               ],
             ),
             const Spacer(),
-            const Text.rich(
+            Text.rich(
               TextSpan(
                 children: [
-                  TextSpan(
-                    text: "Seller: ",
+                  const TextSpan(
+                    text: "Người bán: ",
                     style: TextStyle(fontSize: 16),
                   ),
                   TextSpan(
-                    text: '5',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    text: 'UTE Coffee',
+                    style: GoogleFonts.nunito(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

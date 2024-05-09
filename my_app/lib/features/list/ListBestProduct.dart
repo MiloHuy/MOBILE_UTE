@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/features/details/detailProduct.dart';
 import 'package:my_app/features/details/productDetail.dart';
 import 'package:my_app/services/products/all-best-product.svc.dart';
 
@@ -36,8 +37,8 @@ class _ListBestProduct extends State<ListBestProduct> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProductDetailsDetailScreen(
-                    productDetails: ProductDetails(
+                  builder: (context) => DetailScreen(
+                    product: ProductDetails(
                       id: allBestProducts[itemIndex].id,
                       name: allBestProducts[itemIndex].productName,
                       imageUrl: allBestProducts[itemIndex].productImg,

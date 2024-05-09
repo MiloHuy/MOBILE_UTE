@@ -88,8 +88,7 @@ class ProductAddToCartRes {
       id: json['data']['id'],
       products: products,
       productPrice: List<int>.from(json['data']['productPrice']),
-      productQuanitiOrder:
-          List<int>.from(json['data']['productQuanitiOrder']), // corrected here
+      productQuanitiOrder: List<int>.from(json['data']['productQuanitiOrder']),
       productSize: List<String>.from(json['data']['productSize']),
       statusOrder: json['data']['status'],
       confirm: json['data']['confirm'],

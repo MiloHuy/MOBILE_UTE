@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Description extends StatelessWidget {
   final String description;
@@ -42,9 +43,9 @@ class Description extends StatelessWidget {
         const SizedBox(height: 20),
         Text(
           description,
-          style: const TextStyle(
+          style: GoogleFonts.nunito(
             fontSize: 16,
-            color: Colors.grey,
+            color: Colors.black,
           ),
         ),
       ],

@@ -103,6 +103,10 @@ class _EditProfileViewState extends State<EditProfileView> {
                   child: const Text('OK'),
                   onPressed: () {
                     Navigator.of(context).pop();
+
+                    Navigator.of(
+                      context,
+                    ).pop(value);
                   },
                 ),
               ],

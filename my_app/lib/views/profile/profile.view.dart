@@ -3,22 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/common/colors.com.dart';
 import 'package:my_app/common/setting_row.dart';
 import 'package:my_app/common_widgets/button_shadow.dart';
+import 'package:my_app/features/list/ListDiscount.dart';
+import 'package:my_app/main.dart';
 import 'package:my_app/views/orders/cart.view.dart';
 import 'package:my_app/views/orders/my_order.view.dart';
 import 'package:my_app/views/profile/edit-profile.view.dart';
 
 class ProfileView extends StatefulWidget {
-  final String avatarUrl;
-  final String email;
-  final String name;
-  final String phone;
-
-  const ProfileView(
-      {super.key,
-      required this.avatarUrl,
-      required this.email,
-      required this.name,
-      required this.phone});
+  const ProfileView({
+    super.key,
+  });
 
   @override
   State<ProfileView> createState() => _ProfileViewState();
@@ -59,9 +53,15 @@ class _ProfileViewState extends State<ProfileView> {
       "image":
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ32-rDyWsWk19V7AynIAix4nxzYMAEWo1OzzZbDgignQ&s",
       "name": "Phiếu giảm giá",
-      "tag": "7"
+      "tag": "7",
+      "onPress": const ListDiscount()
     },
   ];
+
+  String avatarUrl = prefs?.getString('avatar') ?? '';
+  String email = prefs?.getString('email') ?? '';
+  String fullName = prefs?.getString('fullName') ?? '';
+  String phone = prefs?.getString('phone') ?? '';
 
   @override
   Widget build(BuildContext context) {
@@ -96,17 +96,17 @@ class _ProfileViewState extends State<ProfileView> {
       children: [
         CircleAvatar(
           radius: 40,
-          backgroundImage: NetworkImage(widget.avatarUrl),
+          backgroundImage: NetworkImage(avatarUrl),
         ),
         const SizedBox(width: 20),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.name,
+            Text(fullName,
                 style: GoogleFonts.nunito(
                     fontSize: 20, fontWeight: FontWeight.w600)),
             const SizedBox(height: 5),
-            Text(widget.phone,
+            Text(phone,
                 style: GoogleFonts.nunito(fontSize: 16, color: Colors.grey)),
           ],
         ),
@@ -146,23 +146,32 @@ class _ProfileViewState extends State<ProfileView> {
 
   Widget _buildItem(Map item) {
     return SettingRow(
-      icon: item['image'],
-      title: item['name'],
-      number: 6,
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => item['onPress']),
-        );
-      },
-    );
+        icon: item['image'],
+        title: item['name'],
+        number: 6,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => item['onPress']),
+          ).then(
+            (value) {
+              print('value: $value');
+              setState(() {
+                avatarUrl = value['avatar'];
+                email = value['email'];
+                fullName = value['fullName'];
+                phone = value['phone'];
+              });
+            },
+          );
+        });
   }
 
   Widget _buildLogoutButton() {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
         child: ButtonShadowWidget(
-          title: 'Logout',
+          title: 'Đăng xuất',
           color: Colors.red,
           onPressed: () {},
         ));

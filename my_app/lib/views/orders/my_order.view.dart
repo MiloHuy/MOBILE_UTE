@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/main.dart';
 import 'package:my_app/model/order.model.dart';
 import 'package:my_app/model/productAddToCart.model.dart';
 import 'package:my_app/services/orders/all-product-status.svc.dart';
+import 'package:my_app/services/orders/update-order-status.dart';
 import 'package:my_app/widgets/product_card_widget.dart';
 
 class MyOrderView extends StatefulWidget {
@@ -18,6 +21,7 @@ class _MyOrderViewState extends State<MyOrderView>
   late TabController _tabController;
   final userId = prefs?.getString('userId') ?? '';
   List<ProductAddToCart> allOrders = [];
+  final StreamController<String> _streamController = StreamController<String>();
 
   @override
   void initState() {
@@ -31,13 +35,13 @@ class _MyOrderViewState extends State<MyOrderView>
     });
   }
 
-  Future<List<ProductAddToCart>> fetchOrders(String status) {
+  Future<ProductAddToCartRes> fetchOrders(String status) {
     return AllProductStatusService.getAll({'status': status}, userId)
-        .then((value) => value.products);
+        .then((value) => value);
   }
 
   Widget buildOrders(String status) {
-    return FutureBuilder<List<ProductAddToCart>>(
+    return FutureBuilder<ProductAddToCartRes>(
       future: fetchOrders(status),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -48,12 +52,13 @@ class _MyOrderViewState extends State<MyOrderView>
             'Error: ${snapshot.error}',
             style: GoogleFonts.nunito(fontSize: 15),
           ));
-        } else if (snapshot.data!.isEmpty) {
+        } else if (snapshot.data!.products.isEmpty) {
           return Center(
-            child: Text('No orders', style: GoogleFonts.nunito(fontSize: 15)),
+            child: Text('Chưa có đơn hàng nào',
+                style: GoogleFonts.nunito(fontSize: 15)),
           );
         } else {
-          allOrders = snapshot.data!;
+          allOrders = snapshot.data!.products;
           return ListView.builder(
             itemCount: allOrders.length,
             itemBuilder: (context, index) {
@@ -82,20 +87,37 @@ class _MyOrderViewState extends State<MyOrderView>
                       productImg: allOrders[index].productImg,
                     ),
                     buttonFunction: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shadowColor: Colors.grey,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shadowColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        'Hủy đơn',
-                        style: GoogleFonts.nunito(
-                            fontSize: 14, color: Colors.black),
-                      ),
-                    ),
+                        child: TextButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.white),
+                          ),
+                          child: Text(
+                            'Hủy đơn',
+                            style: GoogleFonts.nunito(
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                          ),
+                          onPressed: () async {
+                            await UpdateOrderStatus.updateOrderStatus(
+                              snapshot.data!.id,
+                              'ABORTED',
+                            ).then((value) => value);
+
+                            _streamController.add(status);
+
+                            setState(() {});
+                          },
+                        )),
                   ));
             },
           );

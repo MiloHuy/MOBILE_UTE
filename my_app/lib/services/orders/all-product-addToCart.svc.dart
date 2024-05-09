@@ -6,6 +6,7 @@ import 'package:my_app/model/productAddToCart.model.dart';
 
 class AllProductAddToCart {
   static String url = SVKey.productOrderStatus;
+  static String urlDelete = SVKey.deleteProduct;
 
   static Future<ProductAddToCartRes> getAll(
       Map<String, dynamic> body, String userId) async {
@@ -26,6 +27,26 @@ class AllProductAddToCart {
       }
     } catch (e) {
       print('Error AllProductAddToCart: $e');
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> deleteProduct(String productId, String orderId) async {
+    try {
+      var response = await http.delete(
+          Uri.parse(urlDelete.replaceFirst(':orderId', orderId)),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'productId': productId,
+          }));
+
+      if (response.statusCode == 200) {
+        return jsonEncode(response.body);
+      } else {
+        throw Exception('Failed to delete data');
+      }
+    } catch (e) {
+      print('Error deleteProduct: $e');
       rethrow;
     }
   }

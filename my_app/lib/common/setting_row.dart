@@ -40,24 +40,6 @@ class SettingRow extends StatelessWidget {
             const SizedBox(
               width: 10,
             ),
-            Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.red, width: 2),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  '$number',
-                  style: const TextStyle(
-                    color: Colors.red,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ),
             const Icon(Icons.navigate_next, color: TColor.blackColor, size: 15)
           ],
         ),

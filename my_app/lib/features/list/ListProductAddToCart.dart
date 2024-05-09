@@ -5,6 +5,7 @@ import 'package:my_app/main.dart';
 import 'package:my_app/model/order.model.dart';
 import 'package:my_app/model/productAddToCart.model.dart';
 import 'package:my_app/services/orders/all-product-addToCart.svc.dart';
+import 'package:my_app/utils/format.utils.dart';
 import 'package:my_app/widgets/product_card_widget.dart';
 
 class ListProductAddToCart extends StatefulWidget {
@@ -17,8 +18,11 @@ class ListProductAddToCart extends StatefulWidget {
 class _ListProductAddToCartState extends State<ListProductAddToCart> {
   List<ProductAddToCart> allProducts = [];
   List<int> productPrice = [];
+  List<int> productQuanitiOrder = [];
+  String orderId = '';
+
   final userId = prefs?.getString('userId') ?? '';
-  int price = 10; // Initial price
+  int totalPrice = 0;
 
   @override
   void initState() {
@@ -32,10 +36,21 @@ class _ListProductAddToCartState extends State<ListProductAddToCart> {
       setState(() {
         allProducts = value.products;
         productPrice = value.productPrice;
+        productQuanitiOrder = value.productQuanitiOrder;
+        totalPrice = calculateTotalPrice();
+        orderId = value.id;
       });
     }).catchError((error) {
       print('Error getting all products: $error');
     });
+  }
+
+  int calculateTotalPrice() {
+    int total = 0;
+    for (int i = 0; i < productPrice.length; i++) {
+      total += productPrice[i] * productQuanitiOrder[i];
+    }
+    return total;
   }
 
   @override
@@ -64,35 +79,79 @@ class _ListProductAddToCartState extends State<ListProductAddToCart> {
                         ],
                       ),
                       child: ProductCardWidget(
-                        product: Orders(
-                            userId: userId,
-                            productId: cartItems.id,
-                            productImg: cartItems.productImg,
-                            productName: cartItems.productName,
-                            productPrice: cartItems.price[0],
-                            productQuanitiOrder: 1,
-                            productSize: cartItems.size),
-                        buttonFunction: const Row(
-                          children: [
-                            SizedBox(width: 10),
-                            Icon(
-                              Icons.add,
-                              size: 20,
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              '123',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
+                          product: Orders(
+                              userId: userId,
+                              productId: cartItems.id,
+                              productImg: cartItems.productImg,
+                              productName: cartItems.productName,
+                              productPrice: cartItems.price[0],
+                              productQuanitiOrder: 1,
+                              productSize: cartItems.size),
+                          buttonFunction: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap: () async {
+                                  await AllProductAddToCart.deleteProduct(
+                                      cartItems.id, orderId);
+                                  fetchAllProducts();
+                                },
+                                child: const Icon(Icons.delete,
+                                    color: Colors.red, size: 20),
                               ),
-                            ),
-                            SizedBox(width: 10),
-                            Icon(Icons.remove, size: 20),
-                            SizedBox(width: 10),
-                          ],
-                        ),
-                      ));
+                              const SizedBox(height: 20),
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: Colors.grey,
+                                      width:
+                                          0.5), // Customize color and width as needed
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const SizedBox(width: 10),
+                                    GestureDetector(
+                                      onTap: () {
+                                        if (productQuanitiOrder[index] > 0) {
+                                          setState(() {
+                                            productQuanitiOrder[index]--;
+                                            totalPrice = calculateTotalPrice();
+                                          });
+                                        }
+                                      },
+                                      child: const Icon(Icons.remove, size: 20),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      productQuanitiOrder[index].toString(),
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          productQuanitiOrder[index]++;
+                                          totalPrice = calculateTotalPrice();
+                                        });
+                                      },
+                                      child: const Icon(
+                                        Icons.add,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                  ],
+                                ),
+                              )
+                            ],
+                          )));
                 }
                 return null;
               },
@@ -102,7 +161,7 @@ class _ListProductAddToCartState extends State<ListProductAddToCart> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Tổng đơn hàng: ${productPrice.isNotEmpty ? productPrice.reduce((a, b) => a + b) : 0}',
+                'Tổng đơn hàng: ${formatNumber(totalPrice)}',
                 style: GoogleFonts.nunito(fontSize: 18, color: Colors.black),
               ),
               const SizedBox(width: 30),
